@@ -23,7 +23,6 @@
     <?php
     session_start();
 
-    // Очистка сессии
     if (isset($_POST['clear'])) {
         session_unset();
         session_destroy();
@@ -31,14 +30,12 @@
         exit();
     }
 
-    // Обработка выбора телефона
     if (isset($_POST["choose_phone"])) {
         $_SESSION["phones"] = $_POST["phones"];
         header("Location: index.php");
         exit();
     }
 
-    // Показать форму выбора фурнитуры, если выбран телефон
     if (isset($_SESSION["phones"])) {
         $phones = $_SESSION["phones"];
         switch ($phones) {
@@ -79,7 +76,6 @@
                 break;
         }
 
-        // Показать выбранную фурнитуру/аксессуары
         if (!empty($_SESSION['selected_items'])) {
             echo "<p>Выбранные товары:</p>";
             foreach ($_SESSION['selected_items'] as $index => $item) {
@@ -87,22 +83,17 @@
             }
         }
     }
-    
-    // Обработка добавления фурнитуры/аксессуаров
     if (isset($_POST['add_furniture'])) {
         $dobavlenya = $_POST['add_furniture'];
         $furnitureForSamsung = ["Навушники Самсунг Pro 228 Limited Edition", "Зарядка 1337 Ватт", "Чохол чорний", "Чохол чорний з прінтом к-он"];
         $selectedItem = $furnitureForSamsung[$dobavlenya];
         $_SESSION['selected_items'][] = $selectedItem;
-        // Удаление выбранного элемента из исходного списка
         unset($furnitureForSamsung[$dobavlenya]);
-        $furnitureForSamsung = array_values($furnitureForSamsung); // Переиндексация массива
+        $furnitureForSamsung = array_values($furnitureForSamsung);
         $_SESSION['furnitureForSamsung'] = $furnitureForSamsung;
         header("Location: index.php");
         exit();
     }
-
-    // Обработка добавления аксессуаров для Айфона и Сяоми
     if (isset($_POST['add_accessory'])) {
         $dobavlenya = $_POST['add_accessory'];
         $phones = $_SESSION["phones"];
@@ -111,9 +102,8 @@
                 $accessoriesForIPhone = ["Наушники Айфон X", "Зарядка Apple 20W", "Чехол кожаный", "Защитное стекло"];
                 $selectedItem = $accessoriesForIPhone[$dobavlenya];
                 $_SESSION['selected_items'][] = $selectedItem;
-                // Удаление выбранного элемента из исходного списка
                 unset($accessoriesForIPhone[$dobavlenya]);
-                $accessoriesForIPhone = array_values($accessoriesForIPhone); // Переиндексация массива
+                $accessoriesForIPhone = array_values($accessoriesForIPhone);
                 $_SESSION['accessoriesForIPhone'] = $accessoriesForIPhone;
                 break;
 
@@ -121,24 +111,20 @@
                 $accessoriesForXiaomi = ["Наушники Xiaomi Pro", "Зарядка Xiaomi 100W", "Силиконовый чехол", "Стекло защитное с закругленными краями"];
                 $selectedItem = $accessoriesForXiaomi[$dobavlenya];
                 $_SESSION['selected_items'][] = $selectedItem;
-                // Удаление выбранного элемента из исходного списка
                 unset($accessoriesForXiaomi[$dobavlenya]);
-                $accessoriesForXiaomi = array_values($accessoriesForXiaomi); // Переиндексация массива
+                $accessoriesForXiaomi = array_values($accessoriesForXiaomi);
                 $_SESSION['accessoriesForXiaomi'] = $accessoriesForXiaomi;
                 break;
         }
         header("Location: index.php");
         exit();
     }
-
-    // Обработка удаления фурнитуры/аксессуаров
     if (isset($_POST['remove_item'])) {
         $removeIndex = $_POST['remove_item'];
         if (isset($_SESSION['selected_items'][$removeIndex])) {
             $removedItem = $_SESSION['selected_items'][$removeIndex];
             unset($_SESSION['selected_items'][$removeIndex]);
-            $_SESSION['selected_items'] = array_values($_SESSION['selected_items']); // Переиндексация массива
-            // Добавление удаленного элемента обратно в исходный список
+            $_SESSION['selected_items'] = array_values($_SESSION['selected_items']);
             switch ($_SESSION["phones"]) {
                 case '1':
                     $_SESSION['furnitureForSamsung'][] = $removedItem;
