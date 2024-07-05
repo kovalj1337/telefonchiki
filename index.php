@@ -7,139 +7,51 @@
 </head>
 <body>
     <form action="index.php" method="POST">
-        <input type="radio" name="phones" value="1">
-        <label for="phones">Сасунг</label>
-        <input type="radio" name="phones" value="2">
-        <label for="phones">Афон</label>
-        <input type="radio" name="phones" value="3">
-        <label for="phones">Сяомы</label>
-        <input type="submit" name="choose_phone" value="Выбрать">
-    </form>
-
-    <form action="index.php" method="POST">
-        <button type="submit" name="clear" value="1">Очистить</button>
-    </form>
-    
+    <input type="radio" name="phones" value="1">
+    <label for="phones">Сасунг</label>
+    <input type="radio" name="phones" value="2">
+    <label for="phones">Афон</label>
+    <input type="radio" name="phones" value="3">
+    <label for="phones">Сяомы</label>
+    <input type="submit" name="" id="">
     <?php
-    session_start();
-
-    if (isset($_POST['clear'])) {
-        session_unset();
-        session_destroy();
-        header("Location: index.php");
-        exit();
-    }
-
-    if (isset($_POST["choose_phone"])) {
-        $_SESSION["phones"] = $_POST["phones"];
-        header("Location: index.php");
-        exit();
-    }
-
-    if (isset($_SESSION["phones"])) {
-        $phones = $_SESSION["phones"];
-        switch ($phones) {
-            case '1':
-                echo 'Вы выбрали Самсунг! Выберите гарнитуру:';
-                $furnitureForSamsung = ["Навушники Самсунг Pro 228 Limited Edition", "Зарядка 1337 Ватт", "Чохол чорний", "Чохол чорний з прінтом к-он"];
-                foreach ($furnitureForSamsung as $i => $furniture) {
-                    if (!in_array($furniture, $_SESSION['selected_items'])) {
-                        echo "<form action='index.php' method='POST'>";
-                        echo "<p>$furniture <button type='submit' name='add_furniture' value='$i'>+</button></p>";
-                        echo "</form>";
-                    }
-                }
-                break;
-
-            case '2':
-                echo 'Вы выбрали Айфон! Выберите аксессуары:';
-                $accessoriesForIPhone = ["Наушники Айфон X", "Зарядка Apple 20W", "Чехол кожаный", "Защитное стекло"];
-                foreach ($accessoriesForIPhone as $i => $accessory) {
-                    if (!in_array($accessory, $_SESSION['selected_items'])) {
-                        echo "<form action='index.php' method='POST'>";
-                        echo "<p>$accessory <button type='submit' name='add_accessory' value='$i'>+</button></p>";
-                        echo "</form>";
-                    }
-                }
-                break;
-
-            case '3':
-                echo 'Вы выбрали Сяоми! Выберите аксессуары:';
-                $accessoriesForXiaomi = ["Наушники Xiaomi Pro", "Зарядка Xiaomi 100W", "Силиконовый чехол", "Стекло защитное с закругленными краями"];
-                foreach ($accessoriesForXiaomi as $i => $accessory) {
-                    if (!in_array($accessory, $_SESSION['selected_items'])) {
-                        echo "<form action='index.php' method='POST'>";
-                        echo "<p>$accessory <button type='submit' name='add_accessory' value='$i'>+</button></p>";
-                        echo "</form>";
-                    }
-                }
-                break;
+    if($_POST){
+        session_start();
+        if(isset($_SESSION["phones"])){
+            $phones = $_SESSION["phones"];
+        }else{
+            $phones = $_SESSION["phones"] = $_POST["phones"];
         }
-
-        if (!empty($_SESSION['selected_items'])) {
-            echo "<p>Выбранные товары:</p>";
-            foreach ($_SESSION['selected_items'] as $index => $item) {
-                echo "<p>$item <form action='index.php' method='POST'><button type='submit' name='remove_item' value='$index'>Удалить</button></form></p>";
+        if($phones == '1'){
+            echo 'Ви вибрали самсунг! Виберіть гарнітуру до вашого пристроя';
+            $furnitureForVibor = ["Навушники сасунг pro 228 limited edition v2 ", "ЗАРЯДКА 1337ВАТ" , "чохоло чорни" , "ЧОХОЛ ЧОРНИ З ПРІНТОМ К - ОН"] ;
+            if(isset($_SESSION["furniture"])){
+                $furniture = $_SESSION["furniture"];
+            }else{
+                $furniture = [];
+            }
+            for($i = 0; $i < count($furnitureForVibor) ; $i++){
+                echo"<p> $furnitureForVibor[$i] <button type='submit' name='dobavlenya' value='$furnitureForVibor[$i]'>+</button> </p>";
+            }
+            if(isset($_POST["dobavlenya"])){
+                $add = $_POST["dobavlenya"];
+            }else{
+                $add = false;
+            }
+            if(isset($add)){
+                echo("добавлено");
+                array_push($furniture,$add);
+                $_SESSION["furniture"] = $furniture;
+                echo"<p>Ви вибрали</p>";
+                for($j = 0; $j < count($furniture) ; $j++){
+                    echo"<p> $furniture[$j]</p>";
+                }
             }
         }
     }
-    if (isset($_POST['add_furniture'])) {
-        $dobavlenya = $_POST['add_furniture'];
-        $furnitureForSamsung = ["Навушники Самсунг Pro 228 Limited Edition", "Зарядка 1337 Ватт", "Чохол чорний", "Чохол чорний з прінтом к-он"];
-        $selectedItem = $furnitureForSamsung[$dobavlenya];
-        $_SESSION['selected_items'][] = $selectedItem;
-        unset($furnitureForSamsung[$dobavlenya]);
-        $furnitureForSamsung = array_values($furnitureForSamsung);
-        $_SESSION['furnitureForSamsung'] = $furnitureForSamsung;
-        header("Location: index.php");
-        exit();
-    }
-    if (isset($_POST['add_accessory'])) {
-        $dobavlenya = $_POST['add_accessory'];
-        $phones = $_SESSION["phones"];
-        switch ($phones) {
-            case '2':
-                $accessoriesForIPhone = ["Наушники Айфон X", "Зарядка Apple 20W", "Чехол кожаный", "Защитное стекло"];
-                $selectedItem = $accessoriesForIPhone[$dobavlenya];
-                $_SESSION['selected_items'][] = $selectedItem;
-                unset($accessoriesForIPhone[$dobavlenya]);
-                $accessoriesForIPhone = array_values($accessoriesForIPhone);
-                $_SESSION['accessoriesForIPhone'] = $accessoriesForIPhone;
-                break;
-
-            case '3':
-                $accessoriesForXiaomi = ["Наушники Xiaomi Pro", "Зарядка Xiaomi 100W", "Силиконовый чехол", "Стекло защитное с закругленными краями"];
-                $selectedItem = $accessoriesForXiaomi[$dobavlenya];
-                $_SESSION['selected_items'][] = $selectedItem;
-                unset($accessoriesForXiaomi[$dobavlenya]);
-                $accessoriesForXiaomi = array_values($accessoriesForXiaomi);
-                $_SESSION['accessoriesForXiaomi'] = $accessoriesForXiaomi;
-                break;
-        }
-        header("Location: index.php");
-        exit();
-    }
-    if (isset($_POST['remove_item'])) {
-        $removeIndex = $_POST['remove_item'];
-        if (isset($_SESSION['selected_items'][$removeIndex])) {
-            $removedItem = $_SESSION['selected_items'][$removeIndex];
-            unset($_SESSION['selected_items'][$removeIndex]);
-            $_SESSION['selected_items'] = array_values($_SESSION['selected_items']);
-            switch ($_SESSION["phones"]) {
-                case '1':
-                    $_SESSION['furnitureForSamsung'][] = $removedItem;
-                    break;
-                case '2':
-                    $_SESSION['accessoriesForIPhone'][] = $removedItem;
-                    break;
-                case '3':
-                    $_SESSION['accessoriesForXiaomi'][] = $removedItem;
-                    break;
-            }
-        }
-        header("Location: index.php");
-        exit();
-    }
+    var_dump($furniture);
+    // session_destroy();
     ?>
+    </form>
 </body>
 </html>
